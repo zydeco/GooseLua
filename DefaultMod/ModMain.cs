@@ -33,6 +33,7 @@ namespace GooseLua {
             });
 
             UserData.RegisterAssembly();
+            Lua.Enums.Register(_G.LuaState);
 
             _G.LuaState.Globals["draw"] = new Lua.Draw(_G.LuaState);
             _G.LuaState.Globals["surface"] = new Lua.Surface(_G.LuaState);
