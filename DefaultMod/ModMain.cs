@@ -104,6 +104,7 @@ namespace GooseLua {
                 return DynValue.Nil;
             });
 
+            form = new formLoader();
             Util.include("http");
             Util.include("math");
             Util.include("string");
@@ -131,7 +132,6 @@ namespace GooseLua {
             InjectionPoints.PostUpdateRigEvent += postRig;
 
             Thread thread = new Thread(() => {
-                form = new formLoader();
                 form.ShowDialog();
             });
             thread.SetApartmentState(ApartmentState.STA);
