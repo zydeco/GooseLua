@@ -84,6 +84,7 @@
     <Compile Include="Keys.cs" />
     <Compile Include="Lua\Hook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Task.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ModMain.cs" />

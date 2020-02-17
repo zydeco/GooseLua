@@ -294,6 +294,8 @@ namespace GooseLua {
                 return DynValue.NewString(_G.path);
             });
 
+            _G.LuaState.Globals["RegisterTask"] = CallbackFunction.FromMethodInfo(_G.LuaState, typeof(Task).GetMethod("Register"));
+
             InjectionPoints.PreTickEvent += preTick;
             InjectionPoints.PostTickEvent += postTick;
             InjectionPoints.PreRenderEvent += preRender;
