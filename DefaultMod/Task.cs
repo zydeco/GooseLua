@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
 using GooseShared;
 using MoonSharp.Interpreter;
 
@@ -63,7 +65,18 @@ namespace GooseLua
         public override void RunTask(GooseEntity s)
         {
             TaskData data = (TaskData)s.currentTaskData;
-            runTask.Call(data.value);
+            try
+            {
+                runTask.Call(data.value);
+            }
+            catch (ScriptRuntimeException ex)
+            {
+                Util.MsgC(ModEntryPoint.form, Color.FromArgb(255, 0, 0), string.Format("[ERROR] {0}: {1}\r\n{2}", ex.Source, ex.DecoratedMessage, ex.StackTrace), "\r\n");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         internal class TaskData : GooseTaskData
