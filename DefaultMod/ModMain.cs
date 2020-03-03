@@ -34,8 +34,9 @@ namespace GooseLua {
             UserData.RegisterAssembly();
             Lua.Enums.Register(_G.LuaState);
 
-            _G.LuaState.Globals["draw"] = new Lua.Draw(_G.LuaState);
-            _G.LuaState.Globals["surface"] = new Lua.Surface(_G.LuaState);
+            Lua.Surface surface = new Lua.Surface(_G.LuaState);
+            _G.LuaState.Globals["draw"] = new Lua.Draw(_G.LuaState, surface);
+            _G.LuaState.Globals["surface"] = surface;
             _G.LuaState.Globals["hook"] = _G.hook;
             _G.LuaState.Globals["input"] = new Lua.Input(_G.LuaState);
             _G.LuaState.Globals["Msg"] = _G.LuaState.Globals["print"];
