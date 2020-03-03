@@ -80,9 +80,27 @@ namespace GooseLua.Lua
             return Color.FromArgb(a, r, g, b);
         }
 
-        private Table GetColorTable(Color color) {
+        public static Color GetColor(Table color, Color? defaultColor = null) {
+            if (color == null) {
+                return defaultColor.GetValueOrDefault();
+            }
+            int r = (int)color.Get("r").Number;
+            int g = (int)color.Get("g").Number;
+            int b = (int)color.Get("b").Number;
+            int a = (int)color.Get("a").Number;
+            Util.Clamp(ref r, 0, 255);
+            Util.Clamp(ref g, 0, 255);
+            Util.Clamp(ref b, 0, 255);
+            Util.Clamp(ref a, 0, 255);
+
+            return Color.FromArgb(a, r, g, b);
+        }
+
+        public static Table GetColorTable(Script script, Color color) {
             return script.DoString($"Color({color.R},{color.G},{color.B},{color.A})").Table;
         }
+
+        private Table GetColorTable(Color color) => GetColorTable(script, color);
 
         private void CheckGraphics() {
             if (graphics == default(Graphics)) throw new ScriptRuntimeException("Graphics not initialized or invalid hook.");

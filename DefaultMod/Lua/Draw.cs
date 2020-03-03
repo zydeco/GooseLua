@@ -23,22 +23,6 @@ namespace GooseLua.Lua
             if (graphics == default(Graphics)) throw new ScriptRuntimeException("Graphics not initialized or invalid hook.");
         }
 
-        private Color GetColor(Table color, Color defaultColor) {
-            if (color == null) {
-                return defaultColor;
-            }
-            int r = (int)color.Get("r").Number;
-            int g = (int)color.Get("g").Number;
-            int b = (int)color.Get("b").Number;
-            int a = (int)color.Get("a").Number;
-            Util.Clamp(ref r, 0, 255);
-            Util.Clamp(ref g, 0, 255);
-            Util.Clamp(ref b, 0, 255);
-            Util.Clamp(ref a, 0, 255);
-
-            return Color.FromArgb(a, r, g, b);
-        }
-
         private StringFormat GetStringFormat(int xAlign, int yAlign) {
             var format = new StringFormat();
             switch (xAlign) {
@@ -112,13 +96,13 @@ namespace GooseLua.Lua
 
             path.CloseFigure();
 
-            graphics.FillPath(new SolidBrush(GetColor(color, Color.White)), path);
+            graphics.FillPath(new SolidBrush(Surface.GetColor(color, Color.White)), path);
         }
 
         public DynValue SimpleText(string text, string font = "DermaDefault", int x = 0, int y = 0, Table color = null, int xAlign = (int)TextAlign.TEXT_ALIGN_LEFT, int yAlign = (int)TextAlign.TEXT_ALIGN_TOP) {
             var pos = new Point(x, y);
             var format = GetStringFormat(xAlign, yAlign);
-            var textColor = GetColor(color, Color.White);
+            var textColor = Surface.GetColor(color, Color.White);
 
             var textFont = surface.GetFont(font);
             graphics.DrawString(text, textFont, new SolidBrush(textColor), pos, format);
@@ -133,8 +117,8 @@ namespace GooseLua.Lua
             var textFont = surface.GetFont(font);
             var pos = new Point(x, y);
             var format = GetStringFormat(xAlign, yAlign);
-            var fillColor = GetColor(color, Color.White);
-            var textOutlineColor = GetColor(outlineColor, Color.White);
+            var fillColor = Surface.GetColor(color, Color.White);
+            var textOutlineColor = Surface.GetColor(outlineColor, Color.White);
             path.AddString(text, textFont.FontFamily, (int)textFont.Style, textFont.Size, pos, format);
 
             if (fillColor.A > 0) {
@@ -176,7 +160,7 @@ namespace GooseLua.Lua
             var size = graphics.MeasureString(text, textFont);
 
             RoundedBox(borderSize, x, y, (int)size.Width + borderSize * 2, (int)size.Height + borderSize * 2, boxColor);
-            graphics.DrawString(text, textFont, new SolidBrush(GetColor(textColor, Color.White)), x + borderSize, y + borderSize);
+            graphics.DrawString(text, textFont, new SolidBrush(Surface.GetColor(textColor, Color.White)), x + borderSize, y + borderSize);
 
             return DynValue.NewTuple(DynValue.NewNumber(size.Width + borderSize * 2), DynValue.NewNumber(size.Height + borderSize * 2));
         }
