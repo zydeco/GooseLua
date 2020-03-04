@@ -118,6 +118,9 @@ namespace GooseLua {
             _G.LuaState.Globals["GetModDirectory"] = new CallbackFunction((ScriptExecutionContext context, CallbackArguments arguments) => {
                 return DynValue.NewString(_G.path);
             });
+            _G.LuaState.Globals["CurTime"] = new CallbackFunction((ScriptExecutionContext context, CallbackArguments arguments) => {
+                return DynValue.NewNumber(SamEngine.Time.time);
+            });
 
             _G.LuaState.Globals["RegisterTask"] = CallbackFunction.FromMethodInfo(_G.LuaState, typeof(Task).GetMethod("Register"));
 
