@@ -136,7 +136,8 @@ namespace GooseLua.Lua
 
         public void DrawCircle(int originX, int originY, int radius, DynValue rOrColor, int g = 255, int b = 255, int a = 255) {
             CheckGraphics();
-            graphics.DrawEllipse(drawPen, new Rectangle(originX - radius, originY - radius, 2*radius, 2*radius));
+            var pen = new Pen(GetColor(rOrColor, g, b, a));
+            graphics.DrawEllipse(pen, new Rectangle(originX - radius, originY - radius, 2*radius, 2*radius));
         }
 
         public void DrawLine(int sx, int sy, int fx, int fy) {

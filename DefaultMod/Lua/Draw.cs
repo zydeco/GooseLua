@@ -166,10 +166,9 @@ namespace GooseLua.Lua
         }
 
         #region non-facepunch API
-        public DynValue MeasureText(string text, string font = "Segoe UI Light")
-        {
-            if (graphics == default(Graphics)) throw new ScriptRuntimeException("Graphics not initialized or invalid _G.hook.");
-            SizeF size = graphics.MeasureString(text, new Font(font, 12f));
+        public DynValue MeasureText(string text, string font = "DermaDefault") {
+            CheckGraphics();
+            SizeF size = graphics.MeasureString(text, surface.GetFont(font));
             return DynValue.NewTable(new Table(_G.LuaState, DynValue.NewNumber(size.Width), DynValue.NewNumber(size.Height)));
         }
         #endregion
