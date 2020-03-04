@@ -2,7 +2,31 @@
 
 These are some functions.
 
-## `Msg`
+## Color
+
+```lua
+table Color( number r, number g, number b, number a = 255 )
+```
+
+Creates a color. Colors are used by the [draw](Libraries/draw.md) and [surface](Libraries/surface.md) libraries.
+
+## CurTime
+
+```lua
+number CurTime()
+```
+
+Returns the current goose time in seconds (with at least 3 decimals accuracy).
+
+## GetModDirectory
+
+```lua
+string GetModDirectory()
+```
+
+Returns the path of the `Lua Mods` directory.
+
+## Msg
 
 ```lua
 void Msg( vararg args )

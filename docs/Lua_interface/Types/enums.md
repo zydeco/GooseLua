@@ -136,3 +136,15 @@ Screen direction returned by [`goose.SetTargetOffscreen()`](../Libraries/goose.m
 | `ScreenDirection.Left` | 0 |  |
 | `ScreenDirection.Top` | 1 |  |
 | `ScreenDirection.Right` | 2 |  |
+
+## Text Alignment
+
+Used for drawing text.
+
+| Name | Value | Notes |
+| ---- | ----- | ----- |
+| `TEXT_ALIGN_LEFT` | 0 | Align the text on the left     |
+| `TEXT_ALIGN_CENTER` | 1 | Align the text in center     |
+| `TEXT_ALIGN_RIGHT` | 2 | Align the text on the right   |
+| `TEXT_ALIGN_TOP` | 3 | Align the text on the top       |
+| `TEXT_ALIGN_BOTTOM` | 4 | Align the text on the bottom |
