@@ -139,7 +139,7 @@ The time at which the goose should stop tracking mud.
 ## AddFootMark
 
 ```lua
-void goose.AddFootMark(number x, number y)
+goose.AddFootMark(number x, number y)
 ```
 
 Adds a foot mark.
@@ -147,7 +147,7 @@ Adds a foot mark.
 ## ClearFootMarks
 
 ```lua
-void goose.ClearFootMarks()
+goose.ClearFootMarks()
 ```
 
 Clears all foot marks.
@@ -214,7 +214,7 @@ The ID of the currently running task.
 ## SetTask
 
 ```lua
-void goose.SetTask( string id, boolean honk = true)
+goose.SetTask( string id, boolean honk = true)
 ```
 
 Set the goose's current task by its ID.
@@ -222,7 +222,7 @@ Set the goose's current task by its ID.
 ## ChooseRandomTask
 
 ```lua
-void goose.ChooseRandomTask()
+goose.ChooseRandomTask()
 ```
 
 Set the goose's task to a random task.
@@ -230,7 +230,7 @@ Set the goose's task to a random task.
 ## Roam
 
 ```lua
-void goose.Roam()
+goose.Roam()
 ```
 
 Set the current task to the default task.
@@ -238,7 +238,7 @@ Set the current task to the default task.
 ## Honk
 
 ```lua
-void goose.Honk()
+goose.Honk()
 ```
 
 Play a honk sound.
@@ -246,7 +246,7 @@ Play a honk sound.
 ## SetSpeed
 
 ```lua
-void goose.SetSpeed( Speed speed )
+goose.SetSpeed( Speed speed )
 ```
 
 Set the speed tier of the goose. See [Speed](../Types/enums.md#speed-tiers).
