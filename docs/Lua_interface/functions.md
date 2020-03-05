@@ -10,6 +10,25 @@ table Color( number r, number g, number b, number a = 255 )
 
 Creates a color. Colors are used by the [draw](Libraries/draw.md) and [surface](Libraries/surface.md) libraries.
 
+#### Arguments
+
+1. `r`: red value of the color (0-255)
+2. `g`: green value of the color (0-255)
+3. `b`: blue value of the color (0-255)
+4. `a`: alpha value of the color (0-255, defaults to 255)
+
+#### Returns
+
+A table representing the color, usable in the [draw](Libraries/draw.md) and [surface](Libraries/surface.md) libraries. Its values are accessible as `r`, `g`, `b` and `a`.
+
+#### Example
+
+```
+orange = Color(255, 165, 0)
+print(string.format("#%02x%02x%02x", orange.r, orange.g, orange.b))
+-- prints #ffa500
+```
+
 ## CurTime
 
 ```lua
@@ -93,6 +112,8 @@ end)
 ```lua
 number ScrH()
 ```
+
+Returns the screen height.
 
 #### Example
 
