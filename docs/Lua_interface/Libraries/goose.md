@@ -4,6 +4,8 @@ The goose library exposes many aspects of the goose.
 
 Some properties are vectors, which have `x` and `y` fields that can be read/written separately, or they can be assigned from a tuple or a table. See [Vector2](../Types/vector2.md).
 
+**Warning:** This library can only be called from within a [hook](hook.md), since the goose entity isn't created yet at the time mods are loaded. To work around this, you can add a `preRender` hook and remove it once it's called, as seen in the example for [renderData](#renderdata).
+
 #### Example
 
 ```lua
@@ -149,6 +151,28 @@ void goose.ClearFootMarks()
 ```
 
 Clears all foot marks.
+
+## renderData
+
+```
+RenderData goose.renderData
+```
+
+Allows changing the colors used to render the goose. The `renderData` field itself is read-only, but its contents can be changed. See [RenderData](../Types/renderData.md).
+
+#### Example
+
+```lua
+-- change goose colors
+hook.Add("preRender", "ChangeGooseColors", function()
+    -- must be done in a hook because the goose isn't available until after mods are initialised
+    goose.renderData.gooseWhite = Color(128, 128, 128)
+    goose.renderData.gooseOrange = Color(255, 0, 0)
+    goose.renderData.gooseOutline = Color(255, 255, 255)
+    goose.renderData.gooseShadow = Color(255, 0, 0)
+    hook.Remove("preRender", "ChangeGooseColors")
+end )
+```
 
 ## rig
 
