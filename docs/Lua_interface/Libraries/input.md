@@ -68,7 +68,7 @@ Gets whether a mouse button is down.
 ## SetCursorPos
 
 ```lua
-void input.SetCursorPos( number mouseX, number mouseY )
+input.SetCursorPos( number mouseX, number mouseY )
 ```
 
 Sets the cursor's position on the screen, relative to the topleft corner.

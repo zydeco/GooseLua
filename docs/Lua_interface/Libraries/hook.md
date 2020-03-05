@@ -16,7 +16,7 @@ The available events to hook are:
 ## Add
 
 ```lua
-void hook.Add( string hook, string name, function callback )
+hook.Add( string hook, string name, function callback )
 ```
 
 Adds a hook to be executed. When the event fires, the given function is called.
@@ -40,7 +40,7 @@ end)
 ## Remove
 
 ```lua
-void hook.Remove( string hook, string name )
+hook.Remove( string hook, string name )
 ```
 
 1. `hook`: event to hook. see [events](hook.md#events).

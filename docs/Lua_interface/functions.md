@@ -29,7 +29,7 @@ Returns the path of the `Lua Mods` directory.
 ## Msg
 
 ```lua
-void Msg( vararg args )
+Msg( vararg args )
 ```
 
 Equivalent of `print`. Shows a string in the console.
@@ -44,7 +44,7 @@ Msg("I'm at", goose.position.x, goose.position.y)
 ## `MsgC`
 
 ```lua
-void MsgC( vararg args )
+MsgC( vararg args )
 ```
 
 Just like `Msg`, except it can also print colored text.
@@ -61,7 +61,7 @@ MsgC("hello from MsgC ",
 ## RegisterTask
 
 ```lua
-void RegisterTask(string id, string name, string description, bool canBePickedRandomly, function runTask)
+RegisterTask(string id, string name, string description, bool canBePickedRandomly, function runTask)
 ```
 Registers a new task to be run by the goose.
 

@@ -78,7 +78,7 @@ end )
 ## DrawLine
 
 ```lua
-void surface.DrawLine( number startX, number startY, number endX, number endY )
+surface.DrawLine( number startX, number startY, number endX, number endY )
 ```
 
 Draws a line from one point to another, using the color set by [surface.SetDrawColor](#setdrawcolor).
@@ -102,7 +102,7 @@ end)
 ## DrawOutlinedRect
 
 ```lua
-void surface.DrawOutlinedRect( number x, number y, number width, number height )
+surface.DrawOutlinedRect( number x, number y, number width, number height )
 ```
 
 Draws a hollow box with a border width of 1px, using the color set by [surface.SetDrawColor](#setdrawcolor).
@@ -141,7 +141,7 @@ end )
 ## DrawRect
 
 ```lua
-void surface.DrawRect( number x, number y, number width, number height )
+surface.DrawRect( number x, number y, number width, number height )
 ```
 
 Draws a solid rectangle on the screen, using the color set by [surface.SetDrawColor](#setdrawcolor).
@@ -214,7 +214,7 @@ Plays a sound file. See [GetModDirectory](../functions.md#getmoddirectory).
 ## SetDrawColor
 
 ```lua
-void surface.SetDrawColor( number r, number g, number b, number a = 255 )
+surface.SetDrawColor( number r, number g, number b, number a = 255 )
 ```
 
 Set the color of any future shapes to be drawn.
