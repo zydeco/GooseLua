@@ -1,5 +1,6 @@
 using GooseShared;
 using MoonSharp.Interpreter;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -110,7 +111,13 @@ namespace GooseLua {
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Tick += delegate {
                 while (_G.mainQueue.Count > 0) {
-                    _G.mainQueue.Dequeue().Invoke();
+                    try {
+                        _G.mainQueue.Dequeue().Invoke();
+                    } catch (InterpreterException ex) {
+                        Util.MsgC(form, Color.FromArgb(255, 0, 0), string.Format("[ERROR] {0}: {1}\r\n{2}", ex.Source, ex.DecoratedMessage, ex.StackTrace), "\r\n");
+                    } catch (Exception ex) {
+                        MessageBox.Show(ex.ToString(), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             };
             timer.Interval = 1;

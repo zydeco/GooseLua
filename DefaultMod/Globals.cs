@@ -56,7 +56,7 @@ namespace GooseLua {
         public static void RunString(string code, string name = "RunString") {
             try {
                 LuaState.DoString(code, LuaState.Globals, name);
-            } catch (ScriptRuntimeException ex) {
+            } catch (InterpreterException ex) {
                 Util.MsgC(ModEntryPoint.form, Color.FromArgb(255, 0, 0), string.Format("[ERROR] {0}: {1}\r\n{2}", ex.Source, ex.DecoratedMessage, ex.StackTrace), "\r\n");
             }
         }
