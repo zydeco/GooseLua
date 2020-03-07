@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace GooseLua {
     class _G {
@@ -20,7 +21,7 @@ namespace GooseLua {
         public static Graphics graphics;
         public static string path;
         public static Hook hook = new Hook();
-        public static Queue<KeyValuePair<string, string>> luaQueue = new Queue<KeyValuePair<string, string>>();
+        public static Queue<Action> mainQueue = new Queue<Action>();
         public static string ApiURL = "https://gooselua.my.to/";
         public static List<string> commands = new List<string>();
         private static string SessionID = "";
