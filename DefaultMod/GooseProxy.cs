@@ -1,10 +1,16 @@
-using System.Drawing;
+using System;
 using System.Linq;
 using System.Reflection;
 using GooseLua.Lua;
 using GooseShared;
 using MoonSharp.Interpreter;
 using SamEngine;
+#if __MACOS__
+using AppKit;
+using CoreGraphics;
+#else
+using System.Drawing;
+#endif
 
 namespace GooseLua
 {
@@ -101,7 +107,7 @@ namespace GooseLua
             get => SamEngine.Time.time;
         }
 
-        #region Foot Marks
+#region Foot Marks
         public float TrackMudEndTime
         {
             get => goose.trackMudEndTime;
@@ -126,7 +132,7 @@ namespace GooseLua
                 goose.footMarks[i].time = 0f;
             }
         }
-        #endregion
+#endregion
 
         public DynValue Rig
         {
@@ -139,7 +145,7 @@ namespace GooseLua
             System.Console.WriteLine("Updating rig");
         }
 
-        #region Goose Functions
+#region Goose Functions
         public string[] Tasks { get => GetTasks(); }
         
         public string Task
@@ -194,9 +200,9 @@ namespace GooseLua
         {
             get => API.Goose.getDistanceToTarget(goose);
         }
-        #endregion
+#endregion
 
-        #region Deprecated
+#region Deprecated
         // Deprecated functions for compatibility
         public string[] GetTasks() => API.TaskDatabase.getAllLoadedTaskIDs();
         public void SetPosition(float x, float y) => goose.position = new Vector2(x, y);
@@ -209,7 +215,7 @@ namespace GooseLua
             }
             return API.TaskDatabase.getAllLoadedTaskIDs()[goose.currentTask];
         }
-        #endregion
+#endregion
     }
 
     class VectorProxy
@@ -433,7 +439,11 @@ namespace GooseLua
         private Script script;
         private GooseProxy gooseProxy;
         private GooseRenderData renderData { get => gooseProxy.goose.renderData; }
+#if __MACOS__
+        private CGColor shadowColor = NSColor.LightGray.CGColor;
+#else
         private Color shadowColor;
+#endif
         private Closure isColor = null;
 
         [MoonSharpHidden]
@@ -443,30 +453,97 @@ namespace GooseLua
         }
 
         public Table GooseWhite {
+#if __MACOS__
+            get => Surface.GetColorTable(script, renderData.gooseWhiteColor);
+            set => renderData.gooseWhiteColor = Surface.GetColor(value, renderData.gooseWhiteColor);
+#else
             get => Surface.GetColorTable(script, renderData.brushGooseWhite.Color);
             set => renderData.brushGooseWhite = new SolidBrush(Surface.GetColor(value, Color.White));
+#endif
         }
 
         public Table GooseOrange {
+#if __MACOS__
+            get => Surface.GetColorTable(script, renderData.gooseOrangeColor);
+            set => renderData.gooseOrangeColor = Surface.GetColor(value, renderData.gooseOrangeColor);
+#else
             get => Surface.GetColorTable(script, renderData.brushGooseOrange.Color);
-            set => renderData.brushGooseWhite = new SolidBrush(Surface.GetColor(value, Color.Orange));
+            set => renderData.brushGooseOrange = new SolidBrush(Surface.GetColor(value, Color.Orange));
+#endif
         }
 
         public Table GooseOutline {
+#if __MACOS__
+            get => Surface.GetColorTable(script, renderData.gooseOutlineColor);
+            set => renderData.gooseOutlineColor = Surface.GetColor(value, renderData.gooseOutlineColor);
+#else
             get => Surface.GetColorTable(script, renderData.brushGooseOutline.Color);
-            set => renderData.brushGooseWhite = new SolidBrush(Surface.GetColor(value, Color.LightGray));
+            set => renderData.brushGooseOutline = new SolidBrush(Surface.GetColor(value, Color.LightGray));
+#endif
         }
 
         public Table GooseShadow {
+#if __MACOS__
+            get => Surface.GetColorTable(script, GetShadowColor(renderData.gooseShadowColor));
+#else
             get => Surface.GetColorTable(script, GetAPixel(renderData.shadowBitmap));
+#endif
             set => SetShadowColor(value);
         }
 
         public bool GooseShadowFill {
+#if __MACOS__
+            get => IsFullyOpaque(renderData.gooseShadowColor);
+#else
             get => IsFullyOpaque(renderData.shadowBitmap);
+#endif
             set => SetShadowColor(null, value);
         }
 
+#if __MACOS__
+        private bool IsFullyOpaque(CGColor color)
+        {
+            return (color.Pattern != null);
+        }
+
+        private CGColor GetShadowColor(CGColor color)
+        {
+            var pattern = color.Pattern;
+            if (pattern == null)
+            {
+                return color;
+            }
+            return shadowColor;
+        }
+
+        public void SetShadowColor(Table value, bool fill = false)
+        {
+            if (isColor == null)
+            {
+                isColor = (Closure)script.Globals["IsColor"];
+            }
+
+            if (value != null && isColor.Call(value).CastToBool())
+            {
+                shadowColor = Surface.GetColor(value, shadowColor);
+            }
+
+            if (fill)
+            {
+                renderData.gooseShadowColor = shadowColor;
+            }
+            else
+            {
+                CGBitmapContext ctx = new CGBitmapContext(IntPtr.Zero, 2, 2, 8, 4 * 2, CGColorSpace.CreateDeviceRGB(), CGBitmapFlags.PremultipliedFirst);
+                ctx.ClearRect(CGRect.FromLTRB(0, 0, 2, 2));
+                ctx.SetFillColor(shadowColor);
+                ctx.FillRect(CGRect.FromLTRB(0, 0, 1, 1));
+                CGImage cgImage = ctx.ToImage();
+                NSImage image = new NSImage(cgImage, new CGSize(2, 2));
+                renderData.gooseShadowColor = NSColor.FromPatternImage(image).CGColor;
+            }
+        }
+#else
         private bool IsFullyOpaque(Bitmap bitmap) {
             for(int x = 0; x < bitmap.Width; x++) {
                 for(int y = 0; y < bitmap.Height; y++) {
@@ -511,5 +588,6 @@ namespace GooseLua
             }
             renderData.shadowBrush = new TextureBrush(renderData.shadowBitmap);
         }
+#endif
     }
 }

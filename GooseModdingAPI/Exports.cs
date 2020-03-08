@@ -1,6 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using SamEngine;
+using System;
+using Point = System.Drawing.Point;
+
+#if __MACOS__
+using CoreGraphics;
+using Graphics = CoreGraphics.CGContext;
+#else
 using System.Drawing;
+#endif
+
 
 namespace GooseShared
 {
@@ -142,7 +151,7 @@ namespace GooseShared
 
     }
 
-    #region Tasks/AI
+#region Tasks/AI
     /*public interface GooseTaskDatabaseInterface
     {
         // Registering your task with the database
@@ -166,32 +175,48 @@ namespace GooseShared
         public abstract GooseTaskData GetNewTaskData(GooseEntity s);
         public abstract void RunTask(GooseEntity s);
     }
-    #endregion
+#endregion
 
-    #region Goose Entity Itself
+#region Goose Entity Itself
     /// <summary>
     /// Describes the default set of colors and brushes the program uses to draw the goose.
     /// </summary>
     public class GooseRenderData
     {
         // Rendering stuff
+#if __MACOS__
+        public int ScreenWidth;
+        public int ScreenHeight;
+        public Func<string, IMovableForm> NewFormForTask;
+        public CGColor gooseWhiteColor, gooseOrangeColor, gooseOutlineColor, gooseShadowColor;
+#else
         public Pen DrawingPen;
         public Bitmap shadowBitmap;
         public TextureBrush shadowBrush;
         public Pen shadowPen;
         public SolidBrush brushGooseWhite, brushGooseOrange, brushGooseOutline;
+#endif
+    }
+
+    public interface IMovableForm
+    {
+        int Width { get; }
+        int Height { get; }
+        GooseEntity ownerGoose { get; }
+        void Show(Action closeAction);
+        void SetPosition(Point point);
     }
 
     /// <summary>
     /// The main set of data for the goose!
     /// </summary>
-    public class GooseEntity
+    public abstract class GooseEntity
     {
         public delegate void TickFunction(GooseEntity g);
         public TickFunction tick;
         public delegate void UpdateRigFunction(Rig rig, Vector2 centerPosition, float direction);
         public UpdateRigFunction updateRig;
-        public delegate void RenderFunction(GooseEntity g, Graphics gfx);
+        public delegate void RenderFunction(GooseEntity g, object gfx);
         public RenderFunction render;
 
         /// <summary>
@@ -267,7 +292,7 @@ namespace GooseShared
             render = r;
         }
     }
-    #endregion
+#endregion
 
     public class Rig
     {
@@ -326,7 +351,7 @@ namespace GooseShared
     }
     
 
-    #region Random assorted things that don't fit anywhere
+#region Random assorted things that don't fit anywhere
 
     public enum ScreenDirection { Left, Top, Right }
 
@@ -338,5 +363,5 @@ namespace GooseShared
         public Vector2 position;
         public float time;
     }
-    #endregion
+#endregion
 }

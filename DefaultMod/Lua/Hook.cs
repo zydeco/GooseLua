@@ -1,14 +1,11 @@
 ﻿using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace GooseLua.Lua {
     [MoonSharpUserData]
     class Hook {
         [MoonSharpHidden]
-        public formLoader form;
         private Dictionary<string, Dictionary<string, Closure>> hooks = new Dictionary<string, Dictionary<string, Closure>>();
         private List<Tuple<string, string, Closure>> deferredUpdates = new List<Tuple<string, string, Closure>>();
         private bool callingHooks = false;
@@ -50,10 +47,8 @@ namespace GooseLua.Lua {
             foreach (Closure func in hooks[hook].Values) {
                 try {
                     func.Call();
-                } catch (InterpreterException ex) {
-                    Util.MsgC(form, Color.FromArgb(255, 0, 0), string.Format("[ERROR] {0}: {1}\r\n{2}", ex.Source, ex.DecoratedMessage, ex.StackTrace), "\r\n");
                 } catch (Exception ex) {
-                    MessageBox.Show(ex.ToString(), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _G.HandleScriptException(ex);
                 }
             }
             callingHooks = false;

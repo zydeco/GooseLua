@@ -168,5 +168,17 @@ namespace GooseLua {
                 return Output.ToString();
             }
         }
+
+        public static void HandleScriptException(Exception ex) {
+            if (ex is InterpreterException) {
+                Util.MsgC(ModEntryPoint.form, Color.FromArgb(255, 0, 0), string.Format("[ERROR] {0}: {1}\r\n{2}", ex.Source, (ex as InterpreterException).DecoratedMessage, ex.StackTrace), "\r\n");
+            } else {
+                MessageBox.Show(ex.ToString(), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public static void RunOnMainQueue(Action action) {
+            _G.mainQueue.Enqueue(action);
+        }
     }
 }

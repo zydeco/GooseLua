@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C2547462-E9A0-42D2-85DB-3EC147BE8AC0}</ProjectGuid>
+    <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MacGooseLua</RootNamespace>
+    <AssemblyName>MacGooseLua</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
+    <UseXamMacFullFramework>true</UseXamMacFullFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CreatePackage>false</CreatePackage>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <IncludeMonoRuntime>false</IncludeMonoRuntime>
+    <UseSGen>false</UseSGen>
+    <HttpClientHandler>HttpClientHandler</HttpClientHandler>
+    <LinkMode>None</LinkMode>
+    <XamMacArch></XamMacArch>
+    <AOTMode>None</AOTMode>
+    <CustomCommands>
+      <CustomCommands>
+        <Command>
+          <type>AfterBuild</type>
+          <command>cp bin/Debug/MacGooseLua.dll "/Users/zydeco/Library/Containers/net.namedfork.DesktopGoose/Data/Library/Application Support/Desktop Goose/Mods/MacGooseLua/"</command>
+          <workingdir>${ProjectDir}</workingdir>
+        </Command>
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants></DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CreatePackage>false</CreatePackage>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <IncludeMonoRuntime>false</IncludeMonoRuntime>
+    <UseSGen>false</UseSGen>
+    <HttpClientHandler>HttpClientHandler</HttpClientHandler>
+    <LinkMode>None</LinkMode>
+    <XamMacArch></XamMacArch>
+    <AOTMode>None</AOTMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.Mac" />
+    <Reference Include="MoonSharp.Interpreter">
+      <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+    </Reference>
+    <Reference Include="INIFileParser">
+      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ModMain.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Globals.cs" />
+    <Compile Include="..\DefaultMod\Lua\Config.cs">
+      <Link>Lua\Config.cs</Link>
+    </Compile>
+    <Compile Include="..\DefaultMod\Lua\Enums.cs">
+      <Link>Lua\Enums.cs</Link>
+    </Compile>
+    <Compile Include="..\DefaultMod\Lua\Hook.cs">
+      <Link>Lua\Hook.cs</Link>
+    </Compile>
+    <Compile Include="..\DefaultMod\Lua\Http.cs">
+      <Link>Lua\Http.cs</Link>
+    </Compile>
+    <Compile Include="..\DefaultMod\GooseProxy.cs">
+      <Link>GooseProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\DefaultMod\Task.cs">
+      <Link>Task.cs</Link>
+    </Compile>
+    <Compile Include="Lua\Draw.cs" />
+    <Compile Include="Lua\Surface.cs" />
+    <Compile Include="Lua\Input.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MacGooseModdingAPI\MacGooseModdingAPI.csproj">
+      <Project>{D5337D03-3077-41BE-B0D2-700E054D3B33}</Project>
+      <Name>MacGooseModdingAPI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Resources\Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInPackage>true</IncludeInPackage>
+    </None>
+    <None Include="Resources\Info.plist">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInPackage>true</IncludeInPackage>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\Includes\" />
+    <Folder Include="Lua\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\DefaultMod\Includes\bit.lua">
+      <Link>Resources\Includes\bit.lua</Link>
+    </BundleResource>
+    <BundleResource Include="..\DefaultMod\Includes\color.lua">
+      <Link>Resources\Includes\color.lua</Link>
+    </BundleResource>
+    <BundleResource Include="..\DefaultMod\Includes\concommand.lua">
+      <Link>Resources\Includes\concommand.lua</Link>
+    </BundleResource>
+    <BundleResource Include="..\DefaultMod\Includes\defaultcmds.lua">
+      <Link>Resources\Includes\defaultcmds.lua</Link>
+    </BundleResource>
+    <BundleResource Include="..\DefaultMod\Includes\http.lua">
+      <Link>Resources\Includes\http.lua</Link>
+    </BundleResource>
+    <BundleResource Include="..\DefaultMod\Includes\math.lua">
+      <Link>Resources\Includes\math.lua</Link>
+    </BundleResource>
+    <BundleResource Include="..\DefaultMod\Includes\string.lua">
+      <Link>Resources\Includes\string.lua</Link>
+    </BundleResource>
+    <BundleResource Include="..\DefaultMod\Includes\table.lua">
+      <Link>Resources\Includes\table.lua</Link>
+    </BundleResource>
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\Preferences.xib">
+      <IncludeInPackage>false</IncludeInPackage>
+    </InterfaceDefinition>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
+</Project>

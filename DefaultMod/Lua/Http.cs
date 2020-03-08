@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace GooseLua.Lua {
@@ -48,7 +47,7 @@ namespace GooseLua.Lua {
                 if (ex.Response is HttpWebResponse) {
                     response = (HttpWebResponse)ex.Response;
                 } else if (state.failure != null) {
-                    _G.mainQueue.Enqueue(() => {
+                    _G.RunOnMainQueue(() => {
                         state.failure.Call(ex.Message);
                     });
                     return;
@@ -64,7 +63,7 @@ namespace GooseLua.Lua {
                     var body = streamReader.ReadToEnd();
                     var headers = response.Headers.AllKeys.ToDictionary(k => response.Headers[k]);
 
-                    _G.mainQueue.Enqueue(() => {
+                    _G.RunOnMainQueue(() => {
                         state.success.Call((int)response.StatusCode, body, headers);
                     });
                 }
@@ -155,19 +154,6 @@ namespace GooseLua.Lua {
                     case "if-modified-since":
                         if (DateTime.TryParse(value, out var ifModifiedSince)) {
                             request.IfModifiedSince = ifModifiedSince;
-                        }
-                        break;
-                    case "range":
-                        if (RangeHeaderValue.TryParse(value, out var ranges)) {
-                            foreach(var range in ranges.Ranges) {
-                                if (range.From.HasValue && range.To.HasValue) {
-                                    request.AddRange(ranges.Unit, range.From.Value, range.To.Value);
-                                } else if (range.From.HasValue) {
-                                    request.AddRange(ranges.Unit, range.From.Value);
-                                } else if (range.To.HasValue) {
-                                    request.AddRange(ranges.Unit, range.To.Value);
-                                }
-                            }
                         }
                         break;
                     case "referer":

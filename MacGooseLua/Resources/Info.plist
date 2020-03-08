@@ -1,0 +1,5 @@
+{
+	"CFBundleVersionString" = "Verson Three";
+	NSPrefPaneIconLabel = "Lua Mods";
+	NSPrefPaneIconFile = "Icon.png";
+}
