@@ -1,26 +1,54 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using IniParser;
+using IniParser.Exceptions;
 using IniParser.Model;
 using MoonSharp.Interpreter;
 
 namespace GooseLua.Lua {
     [MoonSharpUserData]
     class Config {
-        private string configFilePath;
-        IniData config;
+        public string configFilePath { get; private set; }
+        public IniData config { get; private set; }
+        private FileSystemWatcher watcher;
 
         [MoonSharpHidden]
         public Config(string configFilePath) {
             this.configFilePath = configFilePath;
             LoadConfigFile();
         }
+
         private void LoadConfigFile() {
             if (File.Exists(configFilePath)) {
                 var parser = new FileIniDataParser();
                 config = parser.ReadFile(configFilePath);
             } else {
                 config = new IniData();
+            }
+            var directory = Path.GetDirectoryName(configFilePath);
+            var fileName = Path.GetFileName(configFilePath);
+            watcher = new FileSystemWatcher(directory, fileName);
+            watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.CreationTime;
+            watcher.Changed += ReloadConfigFile;
+            watcher.Created += ReloadConfigFile;
+            watcher.Renamed += ReloadConfigFile;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void ReloadConfigFile(object _, FileSystemEventArgs args)
+        {
+            if (!File.Exists(configFilePath))
+            {
+                return;
+            }
+            try
+            {
+                var parser = new FileIniDataParser();
+                var newConfig = parser.ReadFile(configFilePath);
+                config = newConfig;
+            } catch (ParsingException)
+            {
             }
         }
 
