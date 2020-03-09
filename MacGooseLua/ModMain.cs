@@ -11,7 +11,9 @@ namespace GooseLua
 {
     [Register("MacGooseLuaMod")]
     public class MacGooseLua : NSObject, IMod
-    {        
+    {
+        private Lua.Config config;
+
         void IMod.Init()
         {
             var path = Path.GetFullPath(Path.Combine(API.Helper.getModDirectory(this), "..", "..", "Lua Mods"));
@@ -38,7 +40,8 @@ namespace GooseLua
             script.Globals["hook"] = hook;
             script.Globals["input"] = new Lua.Input(script);
             script.Globals["Msg"] = script.Globals["print"];
-            script.Globals["config"] = new Lua.Config(Path.Combine(path, "config.ini"));
+            config = new Lua.Config(Path.Combine(path, "config.ini"));
+            script.Globals["config"] = config;
 
             script.Globals["AddConsoleCommand"] = new CallbackFunction((ScriptExecutionContext context, CallbackArguments arguments) => {
                 return DynValue.Nil;
@@ -129,13 +132,6 @@ namespace GooseLua
             }
         }
 
-        [Export("doSomething:")]
-        public void DoSomething(NSObject sender)
-        {
-            Console.WriteLine("Doing something from preferences!");
-        }
-
-
         public void preTick(GooseEntity g)
         {
             _G.goose = g;
@@ -172,6 +168,18 @@ namespace GooseLua
         {
             _G.goose = g;
             _G.hook.CallHooks("postRig");
+        }
+
+        [Export("openModsFolder:")]
+        public void OpenModsFolder(NSObject sender)
+        {
+            NSWorkspace.SharedWorkspace.OpenFile(_G.path);
+        }
+
+        [Export("editConfigFile:")]
+        public void EditConfigFile(NSObject sender)
+        {
+            NSWorkspace.SharedWorkspace.OpenFile(config.configFilePath, "TextEdit.app", true);
         }
     }
 }
