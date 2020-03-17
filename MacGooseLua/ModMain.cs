@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -46,6 +47,35 @@ namespace GooseLua
             script.Globals["hook"] = hook;
             script.Globals["input"] = new Lua.Input(script);
             script.Globals["Msg"] = script.Globals["print"];
+            script.Globals["MsgC"] = new CallbackFunction((ScriptExecutionContext context, CallbackArguments arguments) => {
+                List<dynamic> args = new List<dynamic>();
+                Closure isColor = (Closure)context.CurrentGlobalEnv["IsColor"];
+                for (int i = 0; i < arguments.Count; i++)
+                {
+                    DynValue arg = arguments.RawGet(i, true);
+                    if (arg == DynValue.Nil) continue;
+                    if (arg.Type == DataType.String)
+                    {
+                        args.Add(arg.String);
+                    }
+                    else if (isColor.Call(arg).CastToBool())
+                    {
+                        Table color = arg.Table;
+                        int r = (int)color.Get("r").Number;
+                        int g = (int)color.Get("g").Number;
+                        int b = (int)color.Get("b").Number;
+                        int a = (int)color.Get("a").Number;
+                        args.Add(Color.FromArgb(a, r, g, b));
+                    }
+                    else
+                    {
+                        throw ScriptRuntimeException.BadArgument(i, "MsgC", "expected color or string");
+                    }
+
+                }
+                MsgC(args.ToArray());
+                return DynValue.Nil;
+            });
             config = new Lua.Config(Path.Combine(path, "config.ini"));
             script.Globals["config"] = config;
 
