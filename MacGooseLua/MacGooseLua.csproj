@@ -144,6 +144,8 @@
     <InterfaceDefinition Include="Resources\Preferences.xib">
       <IncludeInPackage>false</IncludeInPackage>
     </InterfaceDefinition>
+    <InterfaceDefinition Include="Resources\Console.xib" />
+    <InterfaceDefinition Include="Resources\Editor.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

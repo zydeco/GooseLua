@@ -2,4 +2,5 @@
 	"CFBundleVersionString" = "Verson Three";
 	NSPrefPaneIconLabel = "Lua Mods";
 	NSPrefPaneIconFile = "Icon.png";
+	"LSMinimumSystemVersion" = 10.9;
 }

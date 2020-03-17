@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using AppKit;
@@ -10,14 +11,19 @@ using MoonSharp.Interpreter;
 namespace GooseLua
 {
     [Register("MacGooseLuaMod")]
-    public class MacGooseLua : NSObject, IMod
+    public class MacGooseLua : NSObject, IMod, INSTextFieldDelegate
     {
-        private Lua.Config config;
+        private Lua.Config config = null;
+        private NSBundle bundle = null;
 
         void IMod.Init()
         {
-            var path = Path.GetFullPath(Path.Combine(API.Helper.getModDirectory(this), "..", "..", "Lua Mods"));
+            var modPath = API.Helper.getModDirectory(this);
+            var path = Path.GetFullPath(Path.Combine(modPath, "..", "..", "Lua Mods"));
+            bundle = new NSBundle(modPath);
+
             var script = new Script(CoreModules.Preset_SoftSandbox);
+            script.Options.DebugPrint = HandlePrint;
             _G.path = path;
             _G.LuaState = script;
 
@@ -181,5 +187,165 @@ namespace GooseLua
         {
             NSWorkspace.SharedWorkspace.OpenFile(config.configFilePath, "TextEdit.app", true);
         }
+
+        private void LoadNibResource(string nibName)
+        {
+            NSNib nib = null;
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"__xammac_content_{nibName}.nib"))
+            {
+                var buf = new byte[stream.Length];
+                stream.Read(buf, 0, buf.Length);
+                nib = new NSNib(NSData.FromArray(buf), bundle);
+            }
+
+            nib.InstantiateNibWithOwner(this, out NSArray nibObjects);
+        }
+
+        #region Console
+        [Export("consoleWindow")]
+        public NSWindow consoleWindow{ get; set; } = null;
+        [Export("consoleTextView")]
+        public NSTextView consoleTextView { get; set; } = null;
+        [Export("consoleInputField")]
+        public NSTextField consoleInputField { get; set; } = null;
+
+        [Export("openConsole:")]
+        public void OpenConsole(NSObject sender)
+        {
+            if (consoleWindow == null) {
+                LoadNibResource("Console");
+                consoleTextView.TextStorage.SetString(new NSAttributedString(bufferedOutput,
+                    font: consoleTextView.Font,
+                    foregroundColor: consoleTextView.TextColor));
+            }
+            consoleWindow.MakeKeyAndOrderFront(sender);
+            consoleWindow.MakeFirstResponder(consoleInputField);
+            consoleTextView.ScrollRangeToVisible(new NSRange(bufferedOutput.Length, 0));
+        }
+
+        [Export("runConsoleCommand:")]
+        public void RunConsoleCommand(NSObject sender)
+        {
+            if (sender is NSTextField field)
+            {
+                var commandString = field.StringValue;
+                field.StringValue = "";
+                RunConsoleCommand(commandString);
+
+            }
+            else if (sender is NSString stringArg)
+            {
+                RunConsoleCommand((string)stringArg);
+            }
+        }
+
+        public void RunConsoleCommand(string command)
+        {
+            AddConsoleText(command + "\n");
+        }
+
+        public void AddConsoleText(string text)
+        {
+            AddConsoleText(new NSAttributedString(text,
+                font: consoleTextView.Font,
+                foregroundColor: consoleTextView.TextColor));
+        }
+
+        public void AddConsoleText(NSAttributedString text)
+        {
+            consoleTextView.TextStorage.Append(text);
+            // remove excess
+            while (consoleTextView.String.Length > consoleMaxSize)
+            {
+                var firstLineLength = consoleTextView.String.IndexOf("\n");
+                if (firstLineLength == -1)
+                {
+                    consoleTextView.TextStorage.SetString(text);
+                } else
+                {
+                    consoleTextView.TextStorage.DeleteRange(new NSRange(0, firstLineLength));
+                }
+            }
+            consoleTextView.ScrollRangeToVisible(new NSRange(consoleTextView.String.Length, 0));
+        }
+
+        private string bufferedOutput = "";
+        private int consoleMaxSize = 1024 * 1024;
+
+        private void HandlePrint(string text)
+        {
+            if (consoleTextView != null)
+            {
+                AddConsoleText(text + "\n");
+            } else
+            {
+                bufferedOutput += text + "\n";
+                // remove excess
+                while (bufferedOutput.Length > consoleMaxSize)
+                {
+                    var firstLineLength = bufferedOutput.IndexOf("\n");
+                    if (firstLineLength == -1)
+                    {
+                        bufferedOutput = text;
+                    } else
+                    {
+                        bufferedOutput = bufferedOutput.Substring(firstLineLength);
+                    }
+                    
+                }
+            }
+        }
+
+        public void MsgC(params dynamic[] args)
+        {
+            Color currentColor = Color.White;
+            foreach (dynamic arg in args)
+            {
+                if (arg is Color colorArg)
+                {
+                    currentColor = colorArg;
+                }
+                else if (arg is string stringArg)
+                {
+                    AddConsoleText(new NSAttributedString(stringArg,
+                        font: consoleTextView.Font,
+                        foregroundColor: NSColor.FromRgba(currentColor.R, currentColor.G, currentColor.B, currentColor.A)));
+                }
+            }
+        }
+ 
+        #endregion
+
+        #region Editor
+        [Export("editorWindow")]
+        public NSWindow editorWindow { get; set; } = null;
+        [Export("editorTextView")]
+        public NSTextView editorTextView { get; set; } = null;
+
+        [Export("openEditor:")]
+        public void OpenEditor(NSObject sender)
+        {
+            if (editorWindow == null)
+            {
+                LoadNibResource("Editor");
+            }
+            editorWindow.MakeKeyAndOrderFront(sender);
+        }
+
+        [Export("runScript:")]
+        public void RunScript(NSObject sender)
+        {
+            var code = editorTextView.String;
+            try
+            {
+                _G.LuaState.DoString(code, _G.LuaState.Globals, "editor");
+            }
+            catch (InterpreterException ex)
+            {
+                OpenConsole(sender);
+                MsgC(Color.Red, string.Format("[ERROR] {0}: {1}\n{2}\n", ex.Source, ex.DecoratedMessage, ex.StackTrace));
+            }
+        }
+        #endregion
     }
 }
